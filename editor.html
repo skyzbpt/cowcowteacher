@@ -6,6 +6,13 @@
 <title>文章編輯器｜牛牛老師補給站</title>
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="logo.PNG">
+<script>
+  /* 登入守衛：未登入立即導回後台，避免內容外洩 */
+  if (sessionStorage.getItem("niuniu_admin_auth") !== "1") {
+    var _n = encodeURIComponent("editor.html" + location.search);
+    location.replace("admin.html?next=" + _n);
+  }
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Huninn&display=swap" rel="stylesheet">
@@ -24,8 +31,8 @@
       </span>
     </a>
     <nav class="main-nav">
-      <a href="index.html">回首頁</a>
-      <a href="index.html#blog">最新文章</a>
+      <a href="admin.html">← 回後台</a>
+      <a href="index.html" target="_blank">檢視網站 ↗</a>
     </nav>
   </div>
 </header>
@@ -59,15 +66,10 @@
 
       <div class="editor-actions">
         <button class="btn" id="save-btn">💾 發布／儲存文章</button>
-        <a class="btn btn-outline" href="index.html#blog">取消</a>
-        <button class="btn btn-outline" id="delete-btn" style="display:none">🗑 刪除這篇文章</button>
+        <a class="btn btn-outline" href="admin.html">取消</a>
+        <button class="btn btn-outline btn-danger" id="delete-btn" style="display:none">🗑 刪除這篇文章</button>
       </div>
-      <p class="editor-note">※ 文章儲存在這台裝置的瀏覽器中（localStorage）。清除瀏覽器資料會遺失自訂文章，重要內容請自行備份。</p>
-    </div>
-
-    <div class="editor-panel">
-      <h2 class="section-title" style="font-size:1.3rem">📚 管理已發布文章</h2>
-      <ul class="manage-list" id="manage-list"></ul>
+      <p class="editor-note">※ 文章儲存在這台裝置的瀏覽器中（localStorage）。清除瀏覽器資料會遺失自訂文章，重要內容請自行備份。所有文章可在<a href="admin.html">後台</a>統一管理。</p>
     </div>
   </div>
 </section>
@@ -86,7 +88,6 @@
     const content = document.getElementById("editor-content");
     const saveBtn = document.getElementById("save-btn");
     const deleteBtn = document.getElementById("delete-btn");
-    const manageList = document.getElementById("manage-list");
 
     let editingId = new URLSearchParams(location.search).get("id");
 
@@ -147,34 +148,8 @@
       if (!editingId) return;
       if (!confirm("確定要刪除這篇文章嗎？")) return;
       niuDeletePost(editingId);
-      location.href = "index.html#blog";
+      location.href = "admin.html";
     });
-
-    /* 管理列表 */
-    function renderManage() {
-      const posts = niuGetPosts();
-      if (!posts.length) {
-        manageList.innerHTML = '<li><span class="m-title">目前沒有文章</span></li>';
-        return;
-      }
-      manageList.innerHTML = posts.map(function (p) {
-        return '<li>' +
-          '<span class="m-title">' + (p.emoji || "📝") + ' ' + p.title + '</span>' +
-          '<span class="m-date">' + (p.date || "") + '</span>' +
-          '<a class="btn btn-small btn-outline" href="editor.html?id=' + encodeURIComponent(p.id) + '">編輯</a>' +
-          '<button class="btn btn-small btn-outline" data-del="' + p.id + '">刪除</button>' +
-        '</li>';
-      }).join("");
-      manageList.querySelectorAll("[data-del]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          if (!confirm("確定要刪除「" + btn.previousElementSibling.previousElementSibling.textContent + "」嗎？")) return;
-          niuDeletePost(btn.dataset.del);
-          if (editingId === btn.dataset.del) location.href = "editor.html";
-          else renderManage();
-        });
-      });
-    }
-    renderManage();
   })();
 </script>
 </body>

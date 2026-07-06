@@ -195,9 +195,6 @@
 <section id="blog">
   <div class="container">
     <h2 class="section-title">最新文章</h2>
-    <div class="blog-toolbar">
-      <a class="btn btn-small" href="editor.html">✏️ 寫新文章</a>
-    </div>
     <div id="post-grid" class="post-grid"></div>
   </div>
 </section>
@@ -229,7 +226,7 @@
         </div>
       </div>
     </div>
-    <p class="footer-copy">© 2026 牛牛老師補給站 × 天領健康教育</p>
+    <p class="footer-copy">© 2026 牛牛老師補給站 × 天領健康教育　·　<a href="admin.html" class="footer-admin-link">後台管理</a></p>
   </div>
 </footer>
 
@@ -243,7 +240,7 @@
     const grid = document.getElementById("post-grid");
     const posts = niuGetPosts();
     if (!posts.length) {
-      grid.outerHTML = '<p class="empty-posts">目前還沒有文章，點「寫新文章」開始你的第一篇吧！</p>';
+      grid.outerHTML = '<p class="empty-posts">文章準備中，敬請期待！</p>';
       return;
     }
     grid.innerHTML = posts.map(function (p) {
@@ -254,7 +251,6 @@
         '<p class="post-excerpt">' + (p.excerpt || "") + '</p>' +
         '<div class="post-actions">' +
           '<a class="btn btn-small" href="article.html?id=' + encodeURIComponent(p.id) + '">閱讀全文</a>' +
-          '<a class="btn btn-small btn-outline" href="editor.html?id=' + encodeURIComponent(p.id) + '">編輯</a>' +
         '</div>' +
       '</article>';
     }).join("");
