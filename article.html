@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文章｜牛牛老師補給站</title>
+<meta name="description" content="牛牛老師補給站部落格文章——科學育兒、正向教養與兒童健康知識分享。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Huninn&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg-corners"></div>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-name">牛牛老蘇補給站</span>
+      <span class="brand-slogan">科學育兒・全方位陪伴</span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html">回首頁</a>
+      <a href="index.html#blog">最新文章</a>
+      <a href="editor.html">寫新文章</a>
+    </nav>
+  </div>
+</header>
+
+<section>
+  <div class="container">
+    <div class="article-page" id="article">
+      <p class="empty-posts">載入中…</p>
+    </div>
+    <div class="center-cta">
+      <a class="btn btn-outline" href="index.html#blog">← 回文章列表</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>牛牛老師補給站</h4>
+        <p>科學育兒・全方位陪伴</p>
+      </div>
+      <div>
+        <h4>合作品牌</h4>
+        <p><strong>天領健康教育</strong></p>
+      </div>
+      <div>
+        <h4>追蹤我們</h4>
+        <p><a href="https://www.instagram.com/mindy0707/" target="_blank" rel="noopener">Instagram</a>・<a href="https://www.facebook.com/share/1624QBbiubP/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook</a></p>
+      </div>
+    </div>
+    <p class="footer-copy">© 2026 牛牛老師補給站 × 天領健康教育</p>
+  </div>
+</footer>
+
+<a class="floating-cta" href="https://calendar.app.google/aHmSeufa2iEQpDbY9" target="_blank" rel="noopener">📅 立即預約 30 分鐘免費健康諮詢</a>
+
+<script src="posts.js"></script>
+<script>
+  (function () {
+    const el = document.getElementById("article");
+    const id = new URLSearchParams(location.search).get("id");
+    const post = id && niuGetPost(id);
+    if (!post) {
+      el.innerHTML = '<p class="empty-posts">找不到這篇文章，它可能已被刪除。</p>';
+      return;
+    }
+    document.title = post.title + "｜牛牛老師補給站";
+    el.innerHTML =
+      '<h1>' + (post.emoji ? post.emoji + " " : "") + post.title + '</h1>' +
+      '<p class="article-meta">' + (post.date || "") + '｜牛牛老蘇</p>' +
+      '<div class="article-body">' + post.html + '</div>';
+  })();
+</script>
+</body>
+</html>

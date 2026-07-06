@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文章編輯器｜牛牛老師補給站</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Huninn&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg-corners"></div>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-name">牛牛老蘇補給站</span>
+      <span class="brand-slogan">科學育兒・全方位陪伴</span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html">回首頁</a>
+      <a href="index.html#blog">最新文章</a>
+    </nav>
+  </div>
+</header>
+
+<section>
+  <div class="container editor-page">
+    <h1 class="section-title">✏️ 文章編輯器</h1>
+    <p class="section-sub">寫下你的育兒觀察與健康知識，發布後會出現在首頁的「最新文章」。</p>
+
+    <div class="editor-panel">
+      <label for="post-emoji">文章符號（emoji，選填）</label>
+      <input type="text" id="post-emoji" placeholder="例如：🌱 🍎 💤" maxlength="4">
+
+      <label for="post-title">文章標題</label>
+      <input type="text" id="post-title" placeholder="輸入文章標題…">
+
+      <label>文章內容</label>
+      <div class="editor-toolbar">
+        <button type="button" data-cmd="formatBlock" data-val="h2">大標</button>
+        <button type="button" data-cmd="formatBlock" data-val="h3">小標</button>
+        <button type="button" data-cmd="bold"><strong>粗體</strong></button>
+        <button type="button" data-cmd="italic"><em>斜體</em></button>
+        <button type="button" data-cmd="insertUnorderedList">• 清單</button>
+        <button type="button" data-cmd="insertOrderedList">1. 編號</button>
+        <button type="button" data-cmd="formatBlock" data-val="blockquote">❝ 引言</button>
+        <button type="button" data-cmd="createLink">🔗 連結</button>
+        <button type="button" data-cmd="formatBlock" data-val="p">一般文字</button>
+        <button type="button" data-cmd="removeFormat">清除格式</button>
+      </div>
+      <div id="editor-content" contenteditable="true"><p>在這裡開始寫文章…</p></div>
+
+      <div class="editor-actions">
+        <button class="btn" id="save-btn">💾 發布／儲存文章</button>
+        <a class="btn btn-outline" href="index.html#blog">取消</a>
+        <button class="btn btn-outline" id="delete-btn" style="display:none">🗑 刪除這篇文章</button>
+      </div>
+      <p class="editor-note">※ 文章儲存在這台裝置的瀏覽器中（localStorage）。清除瀏覽器資料會遺失自訂文章，重要內容請自行備份。</p>
+    </div>
+
+    <div class="editor-panel">
+      <h2 class="section-title" style="font-size:1.3rem">📚 管理已發布文章</h2>
+      <ul class="manage-list" id="manage-list"></ul>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-copy">© 2026 牛牛老師補給站 × 天領健康教育</p>
+  </div>
+</footer>
+
+<script src="posts.js"></script>
+<script>
+  (function () {
+    const emojiInput = document.getElementById("post-emoji");
+    const titleInput = document.getElementById("post-title");
+    const content = document.getElementById("editor-content");
+    const saveBtn = document.getElementById("save-btn");
+    const deleteBtn = document.getElementById("delete-btn");
+    const manageList = document.getElementById("manage-list");
+
+    let editingId = new URLSearchParams(location.search).get("id");
+
+    /* 工具列 */
+    document.querySelectorAll(".editor-toolbar button").forEach(function (btn) {
+      btn.addEventListener("mousedown", function (e) { e.preventDefault(); }); // 保留選取範圍
+      btn.addEventListener("click", function () {
+        const cmd = btn.dataset.cmd;
+        if (cmd === "createLink") {
+          const url = prompt("請輸入連結網址：", "https://");
+          if (url) document.execCommand("createLink", false, url);
+        } else if (btn.dataset.val) {
+          document.execCommand(cmd, false, "<" + btn.dataset.val + ">");
+        } else {
+          document.execCommand(cmd, false, null);
+        }
+        content.focus();
+      });
+    });
+
+    /* 載入編輯中的文章 */
+    function loadPost(id) {
+      const post = niuGetPost(id);
+      if (!post) return;
+      editingId = id;
+      emojiInput.value = post.emoji || "";
+      titleInput.value = post.title || "";
+      content.innerHTML = post.html || "";
+      deleteBtn.style.display = "inline-block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    if (editingId) loadPost(editingId);
+
+    /* 儲存 */
+    saveBtn.addEventListener("click", function () {
+      const title = titleInput.value.trim();
+      if (!title) { alert("請先輸入文章標題！"); titleInput.focus(); return; }
+      const html = content.innerHTML.trim();
+      if (!html || content.textContent.trim() === "" || content.textContent.trim() === "在這裡開始寫文章…") {
+        alert("文章內容還是空的喔！"); content.focus(); return;
+      }
+      const existing = editingId ? niuGetPost(editingId) : null;
+      const post = {
+        id: editingId || ("post-" + Date.now()),
+        emoji: emojiInput.value.trim() || "📝",
+        title: title,
+        date: (existing && existing.date) || niuToday(),
+        excerpt: niuMakeExcerpt(html, 90),
+        html: html
+      };
+      niuSavePost(post);
+      alert("文章已儲存！");
+      location.href = "article.html?id=" + encodeURIComponent(post.id);
+    });
+
+    /* 刪除 */
+    deleteBtn.addEventListener("click", function () {
+      if (!editingId) return;
+      if (!confirm("確定要刪除這篇文章嗎？")) return;
+      niuDeletePost(editingId);
+      location.href = "index.html#blog";
+    });
+
+    /* 管理列表 */
+    function renderManage() {
+      const posts = niuGetPosts();
+      if (!posts.length) {
+        manageList.innerHTML = '<li><span class="m-title">目前沒有文章</span></li>';
+        return;
+      }
+      manageList.innerHTML = posts.map(function (p) {
+        return '<li>' +
+          '<span class="m-title">' + (p.emoji || "📝") + ' ' + p.title + '</span>' +
+          '<span class="m-date">' + (p.date || "") + '</span>' +
+          '<a class="btn btn-small btn-outline" href="editor.html?id=' + encodeURIComponent(p.id) + '">編輯</a>' +
+          '<button class="btn btn-small btn-outline" data-del="' + p.id + '">刪除</button>' +
+        '</li>';
+      }).join("");
+      manageList.querySelectorAll("[data-del]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          if (!confirm("確定要刪除「" + btn.previousElementSibling.previousElementSibling.textContent + "」嗎？")) return;
+          niuDeletePost(btn.dataset.del);
+          if (editingId === btn.dataset.del) location.href = "editor.html";
+          else renderManage();
+        });
+      });
+    }
+    renderManage();
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,693 @@
+/* ============================================
+   牛牛老蘇補給站 — 主樣式表
+   ============================================ */
+:root {
+  --primary: #E76A5D;        /* 主標題 */
+  --btn-bg: #F69681;         /* 項目按鈕粉色底 */
+  --btn-text: #FFFFFF;       /* 按鈕白字 */
+  --brown: #6C4B3F;          /* 深咖啡內文 */
+  --blue: #002874;           /* 深藍內文 */
+  --bg: #FFFFF5;             /* 淺奶油白底 */
+  --corner-green: #CCE29D;   /* 左上綠 */
+  --corner-orange: #FBDB95;  /* 右上橘 */
+  --corner-blue: #A4BFE4;    /* 右下藍 */
+  --corner-pink: #FFBCAD;    /* 左下粉 */
+  --radius: 24px;
+  --shadow: 0 8px 24px rgba(108, 75, 63, .12);
+  --font: "Huninn", "jf-openhuninn", "粉圓體", "Yuanti TC", "YouYuan", "Microsoft JhengHei", sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background-color: var(--bg);
+  color: var(--brown);
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+
+/* ---- 四角背景色塊 ---- */
+.bg-corners {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 0% 0%,   var(--corner-green)  0%, transparent 32%),
+    radial-gradient(circle at 100% 0%, var(--corner-orange) 0%, transparent 32%),
+    radial-gradient(circle at 100% 100%, var(--corner-blue) 0%, transparent 32%),
+    radial-gradient(circle at 0% 100%, var(--corner-pink)   0%, transparent 32%),
+    var(--bg);
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: var(--blue); }
+
+.container {
+  width: min(1100px, 92%);
+  margin: 0 auto;
+}
+
+/* ---- Header ---- */
+header.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 245, .92);
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid var(--corner-pink);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  flex-wrap: wrap;
+}
+
+.brand {
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.brand .brand-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.brand .brand-slogan {
+  font-size: .85rem;
+  color: var(--brown);
+}
+
+nav.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+nav.main-nav a {
+  text-decoration: none;
+  color: var(--brown);
+  font-size: .95rem;
+  padding: 6px 12px;
+  border-radius: 999px;
+  transition: background .2s, color .2s;
+}
+
+nav.main-nav a:hover {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+}
+
+.social-links {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.social-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  text-decoration: none;
+  transition: transform .2s;
+}
+
+.social-links a:hover { transform: scale(1.1); }
+
+.social-links svg { width: 20px; height: 20px; fill: currentColor; }
+
+/* ---- 按鈕 ---- */
+.btn {
+  display: inline-block;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: bold;
+  padding: 14px 32px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  box-shadow: var(--shadow);
+  transition: transform .2s, box-shadow .2s;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(231, 106, 93, .3);
+}
+
+.btn.btn-small { font-size: .95rem; padding: 8px 20px; }
+
+.btn.btn-outline {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--btn-bg);
+  box-shadow: none;
+}
+
+/* ---- 固定預約按鈕 ---- */
+.floating-cta {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 200;
+  background: var(--primary);
+  color: var(--btn-text);
+  text-decoration: none;
+  font-weight: bold;
+  padding: 14px 22px;
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(231, 106, 93, .4);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: floatPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes floatPulse {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* ---- 區塊通用 ---- */
+section { padding: 72px 0; }
+
+.section-title {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.section-sub {
+  text-align: center;
+  color: var(--brown);
+  margin-bottom: 40px;
+  font-size: 1.05rem;
+}
+
+.card-img {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  background: #fff;
+}
+
+/* ---- Hero ---- */
+.hero {
+  padding: 64px 0;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.15fr .85fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.hero-text h1 {
+  font-size: clamp(1.7rem, 4.5vw, 2.5rem);
+  color: var(--primary);
+  line-height: 1.45;
+  margin-bottom: 20px;
+}
+
+.hero-text .hero-sub {
+  font-size: 1.15rem;
+  color: var(--brown);
+  margin-bottom: 8px;
+}
+
+.hero-text .hero-sub strong { color: var(--blue); }
+
+.hero-cta { margin-top: 28px; }
+
+.hero-profile {
+  margin-top: 28px;
+  background: rgba(255, 255, 255, .75);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  box-shadow: var(--shadow);
+}
+
+.hero-profile .profile-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.hero-profile .profile-title {
+  font-size: .95rem;
+  color: var(--blue);
+  margin-bottom: 12px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tags span {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  font-size: .85rem;
+  padding: 4px 14px;
+  border-radius: 999px;
+}
+
+.hero-photo img {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* ---- 圖片區塊（第二、三、五區）---- */
+.img-section .card-img {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.center-cta {
+  text-align: center;
+  margin-top: 40px;
+}
+
+/* ---- 第四區：服務流程 ---- */
+.flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 48px;
+}
+
+.flow-step {
+  background: #fff;
+  border: 2px solid var(--btn-bg);
+  color: var(--brown);
+  font-size: 1.1rem;
+  font-weight: bold;
+  padding: 14px 36px;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.flow-step .step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: .9rem;
+  margin-right: 10px;
+}
+
+.flow-arrow {
+  color: var(--primary);
+  font-size: 1.6rem;
+  line-height: 1;
+  padding: 8px 0;
+}
+
+.flow-imgs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ---- 第六區：關於牛牛老師 ---- */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.check-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.check-list li {
+  background: rgba(255, 255, 255, .8);
+  border-radius: 16px;
+  padding: 14px 20px;
+  box-shadow: var(--shadow);
+  font-size: 1.05rem;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.check-list li::before {
+  content: "✔";
+  color: var(--primary);
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+/* ---- 第七區：合作品牌 ---- */
+.partner-grid {
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  gap: 48px;
+  align-items: center;
+  background: rgba(255, 255, 255, .8);
+  border-radius: var(--radius);
+  padding: 40px;
+  box-shadow: var(--shadow);
+}
+
+.partner-grid img {
+  border-radius: 16px;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.partner-grid h3 {
+  color: var(--blue);
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+}
+
+.partner-grid p { color: var(--brown); font-size: 1.05rem; }
+
+/* ---- 第八區：家長分享 ---- */
+.testimonials {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.testimonial {
+  background: rgba(255, 255, 255, .85);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 6px solid var(--corner-pink);
+}
+
+.testimonial:nth-child(2) { border-top-color: var(--corner-green); }
+.testimonial:nth-child(3) { border-top-color: var(--corner-orange); }
+.testimonial:nth-child(4) { border-top-color: var(--corner-blue); }
+
+.testimonial .t-tag {
+  font-size: 1.15rem;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.testimonial .t-stars { color: #F5A623; letter-spacing: 2px; }
+
+.testimonial .t-body { font-size: .98rem; color: var(--brown); flex: 1; }
+
+.testimonial .t-author {
+  text-align: right;
+  color: var(--blue);
+  font-size: .95rem;
+}
+
+/* ---- 第九區：最新文章 ---- */
+.blog-toolbar {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+}
+
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.post-card {
+  background: rgba(255, 255, 255, .9);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform .2s;
+}
+
+.post-card:hover { transform: translateY(-4px); }
+
+.post-card .post-emoji { font-size: 2.2rem; }
+
+.post-card h3 { color: var(--primary); font-size: 1.25rem; line-height: 1.5; }
+
+.post-card h3 a { color: inherit; text-decoration: none; }
+
+.post-card .post-date { font-size: .85rem; color: var(--blue); }
+
+.post-card .post-excerpt { font-size: .95rem; color: var(--brown); flex: 1; }
+
+.post-card .post-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.empty-posts {
+  text-align: center;
+  color: var(--brown);
+  padding: 40px 0;
+}
+
+/* ---- 文章內頁 ---- */
+.article-page {
+  max-width: 760px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, .9);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(24px, 5vw, 56px);
+}
+
+.article-page h1 {
+  color: var(--primary);
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.article-page .article-meta {
+  color: var(--blue);
+  font-size: .9rem;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 2px dashed var(--corner-pink);
+}
+
+.article-body h2 {
+  color: var(--blue);
+  font-size: 1.35rem;
+  margin: 32px 0 12px;
+}
+
+.article-body h3 {
+  color: var(--primary);
+  font-size: 1.15rem;
+  margin: 24px 0 10px;
+}
+
+.article-body p { margin-bottom: 16px; }
+
+.article-body ul, .article-body ol { margin: 0 0 16px 1.5em; }
+
+.article-body blockquote {
+  border-left: 4px solid var(--btn-bg);
+  background: var(--bg);
+  padding: 12px 20px;
+  border-radius: 0 12px 12px 0;
+  margin-bottom: 16px;
+  color: var(--blue);
+}
+
+/* ---- 編輯器 ---- */
+.editor-page {
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.editor-panel {
+  background: rgba(255, 255, 255, .92);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(20px, 4vw, 40px);
+  margin-bottom: 32px;
+}
+
+.editor-panel label {
+  display: block;
+  font-weight: bold;
+  color: var(--blue);
+  margin: 18px 0 6px;
+}
+
+.editor-panel input[type="text"] {
+  width: 100%;
+  font-family: var(--font);
+  font-size: 1.05rem;
+  padding: 12px 16px;
+  border: 2px solid var(--corner-pink);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--brown);
+}
+
+.editor-panel input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.editor-toolbar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 8px;
+  background: var(--bg);
+  border: 2px solid var(--corner-pink);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+}
+
+.editor-toolbar button {
+  font-family: var(--font);
+  font-size: .9rem;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--brown);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+}
+
+.editor-toolbar button:hover { background: var(--btn-bg); color: #fff; }
+
+#editor-content {
+  min-height: 320px;
+  border: 2px solid var(--corner-pink);
+  border-radius: 0 0 12px 12px;
+  background: #fff;
+  padding: 16px 20px;
+  font-size: 1rem;
+  color: var(--brown);
+  overflow-y: auto;
+}
+
+#editor-content:focus { outline: none; border-color: var(--primary); }
+
+.editor-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.editor-note {
+  font-size: .85rem;
+  color: var(--blue);
+  margin-top: 16px;
+}
+
+.manage-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+
+.manage-list li {
+  background: rgba(255,255,255,.9);
+  border-radius: 14px;
+  padding: 12px 18px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.manage-list .m-title { flex: 1; font-weight: bold; color: var(--brown); min-width: 200px; }
+
+.manage-list .m-date { color: var(--blue); font-size: .85rem; }
+
+/* ---- Footer ---- */
+footer.site-footer {
+  background: var(--brown);
+  color: #FFF6EE;
+  padding: 48px 0 96px;
+  margin-top: 40px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
+}
+
+.footer-grid h4 { color: var(--corner-orange); margin-bottom: 10px; font-size: 1.1rem; }
+
+.footer-grid p, .footer-grid a { color: #FFF6EE; font-size: .95rem; }
+
+.footer-grid a { text-decoration: none; }
+
+.footer-grid a:hover { text-decoration: underline; }
+
+.footer-social { display: flex; gap: 12px; margin-top: 8px; }
+
+.footer-social a {
+  display: inline-flex;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--btn-bg);
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-social svg { width: 20px; height: 20px; fill: #fff; }
+
+.footer-copy {
+  text-align: center;
+  margin-top: 36px;
+  font-size: .85rem;
+  color: #E8CFC2;
+}
+
+/* ---- RWD ---- */
+@media (max-width: 860px) {
+  .hero-grid, .about-grid, .partner-grid { grid-template-columns: 1fr; }
+  .hero-photo { order: -1; max-width: 420px; margin: 0 auto; }
+  .flow-imgs { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; text-align: center; }
+  .footer-social { justify-content: center; }
+  section { padding: 48px 0; }
+  .floating-cta { left: 16px; right: 16px; justify-content: center; font-size: .95rem; }
+}
