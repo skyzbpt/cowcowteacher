@@ -177,6 +177,28 @@ nav.main-nav a:hover {
   box-shadow: none;
 }
 
+/* ---- 右上固定 logo ---- */
+.floating-logo {
+  position: fixed;
+  top: 88px;
+  right: 20px;
+  z-index: 150;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .95);
+  box-shadow: 0 8px 20px rgba(108, 75, 63, .22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  transition: transform .2s;
+}
+
+.floating-logo:hover { transform: scale(1.06); }
+
+.floating-logo img { width: 100%; height: 100%; object-fit: contain; }
+
 /* ---- 固定預約按鈕 ---- */
 .floating-cta {
   position: fixed;
@@ -832,4 +854,6 @@ footer.site-footer {
   .footer-social { justify-content: center; }
   section { padding: 48px 0; }
   .floating-cta { left: 16px; right: 16px; justify-content: center; font-size: .95rem; }
+  /* 手機版 header 已有明顯 logo，隱藏右上浮動 logo 避免重疊 */
+  .floating-logo { display: none; }
 }
