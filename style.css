@@ -177,27 +177,150 @@ nav.main-nav a:hover {
   box-shadow: none;
 }
 
-/* ---- 右上固定 logo ---- */
-.floating-logo {
+/* ---- 固定右上品牌 ---- */
+.corner-brand {
   position: fixed;
-  top: 88px;
+  top: 16px;
   right: 20px;
-  z-index: 150;
-  width: 78px;
-  height: 78px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, .95);
-  box-shadow: 0 8px 20px rgba(108, 75, 63, .22);
+  z-index: 160;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 8px;
+  gap: 10px;
+  text-decoration: none;
+  background: rgba(255, 255, 255, .92);
+  padding: 8px 18px 8px 10px;
+  border-radius: 999px;
+  box-shadow: 0 8px 20px rgba(108, 75, 63, .2);
+  backdrop-filter: blur(6px);
   transition: transform .2s;
 }
 
-.floating-logo:hover { transform: scale(1.06); }
+.corner-brand:hover { transform: translateY(-2px); }
 
-.floating-logo img { width: 100%; height: 100%; object-fit: contain; }
+.corner-brand-logo { width: 50px; height: 50px; object-fit: contain; flex-shrink: 0; }
+
+.corner-brand-text { display: flex; flex-direction: column; line-height: 1.25; }
+
+.corner-brand-name { font-size: 1.2rem; font-weight: bold; color: var(--primary); }
+
+.corner-brand-slogan { font-size: .76rem; color: var(--brown); }
+
+/* ---- 漢堡按鈕 ---- */
+.nav-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 210;
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 14px;
+  background: var(--btn-bg);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  box-shadow: 0 6px 16px rgba(231, 106, 93, .3);
+}
+
+.nav-toggle span {
+  display: block;
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+  background: #fff;
+  transition: transform .3s, opacity .3s;
+}
+
+.nav-toggle.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.nav-toggle.active span:nth-child(2) { opacity: 0; }
+.nav-toggle.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* ---- 選單抽屜 ---- */
+.nav-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(300px, 82vw);
+  z-index: 205;
+  background: var(--bg);
+  box-shadow: 4px 0 28px rgba(108, 75, 63, .2);
+  padding: 92px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform .32s ease;
+}
+
+.nav-menu.open { transform: translateX(0); }
+
+.nav-menu-title {
+  color: var(--primary);
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--corner-pink);
+}
+
+.nav-menu a {
+  text-decoration: none;
+  color: var(--brown);
+  font-size: 1.05rem;
+  padding: 12px 14px;
+  border-radius: 12px;
+  transition: background .2s, color .2s;
+}
+
+.nav-menu a:hover { background: var(--btn-bg); color: #fff; }
+
+.nav-menu-cta {
+  margin-top: 14px;
+  background: var(--primary);
+  color: #fff !important;
+  text-align: center;
+  font-weight: bold;
+}
+
+.nav-menu-cta:hover { background: var(--btn-bg) !important; }
+
+.nav-social { display: flex; gap: 12px; margin-top: 20px; }
+
+.nav-social a {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--btn-bg);
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.nav-social a:hover { background: var(--primary); }
+
+.nav-social svg { width: 22px; height: 22px; fill: #fff; }
+
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(60, 40, 33, .4);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .3s;
+}
+
+.nav-overlay.open { opacity: 1; visibility: visible; }
+
+/* 讓固定的漢堡／品牌不遮住第一區內容 */
+body.has-floating-nav .hero,
+body.has-floating-nav > section:first-of-type { padding-top: 96px; }
 
 /* ---- 固定預約按鈕 ---- */
 .floating-cta {
@@ -854,6 +977,12 @@ footer.site-footer {
   .footer-social { justify-content: center; }
   section { padding: 48px 0; }
   .floating-cta { left: 16px; right: 16px; justify-content: center; font-size: .95rem; }
-  /* 手機版 header 已有明顯 logo，隱藏右上浮動 logo 避免重疊 */
-  .floating-logo { display: none; }
+  /* 手機版品牌縮小、隱藏標語，避免佔太多空間 */
+  .corner-brand { top: 14px; right: 12px; gap: 8px; padding: 6px 14px 6px 8px; }
+  .corner-brand-logo { width: 40px; height: 40px; }
+  .corner-brand-name { font-size: 1rem; }
+  .corner-brand-slogan { display: none; }
+  .nav-toggle { top: 16px; left: 14px; width: 46px; height: 46px; }
+  body.has-floating-nav .hero,
+  body.has-floating-nav > section:first-of-type { padding-top: 80px; }
 }

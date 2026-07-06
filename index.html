@@ -15,37 +15,42 @@
 <link href="https://fonts.googleapis.com/css2?family=Huninn&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="has-floating-nav">
 <div class="bg-corners"></div>
 
-<!-- ================= Header ================= -->
-<header class="site-header">
-  <div class="container header-inner">
-    <a class="brand" href="index.html">
-      <img class="brand-logo" src="logo.PNG" alt="牛牛老蘇補給站 logo">
-      <span class="brand-text">
-        <span class="brand-name">牛牛老蘇補給站</span>
-        <span class="brand-slogan">科學育兒・全方位陪伴</span>
-      </span>
+<!-- ================= 固定右上品牌 ================= -->
+<a class="corner-brand" href="index.html">
+  <img class="corner-brand-logo" src="logo.PNG" alt="牛牛老蘇補給站 logo">
+  <span class="corner-brand-text">
+    <span class="corner-brand-name">牛牛老蘇補給站</span>
+    <span class="corner-brand-slogan">科學育兒・全方位陪伴</span>
+  </span>
+</a>
+
+<!-- ================= 漢堡選單 ================= -->
+<button class="nav-toggle" id="nav-toggle" aria-label="開啟選單" aria-expanded="false" aria-controls="nav-menu">
+  <span></span><span></span><span></span>
+</button>
+<nav class="nav-menu" id="nav-menu" aria-label="主選單">
+  <p class="nav-menu-title">選單</p>
+  <a href="index.html#why">為什麼諮詢</a>
+  <a href="index.html#get">免費諮詢內容</a>
+  <a href="index.html#flow">服務流程</a>
+  <a href="index.html#about">關於牛牛老師</a>
+  <a href="index.html#partner">合作品牌</a>
+  <a href="index.html#reviews">家長分享</a>
+  <a href="index.html#blog">最新文章</a>
+  <a class="nav-menu-cta" href="https://calendar.app.google/aHmSeufa2iEQpDbY9" target="_blank" rel="noopener">📅 立即預約免費諮詢</a>
+  <div class="nav-social">
+    <a href="https://www.instagram.com/mindy0707/" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2m0 1.8c-3.1 0-3.5 0-4.8.1-1.1.1-1.5.2-1.9.3-.5.2-.8.4-1.1.7-.3.3-.6.6-.7 1.1-.1.4-.3.8-.3 1.9-.1 1.2-.1 1.6-.1 4.8s0 3.5.1 4.8c.1 1.1.2 1.5.3 1.9.2.5.4.8.7 1.1.3.3.6.6 1.1.7.4.1.8.3 1.9.3 1.2.1 1.6.1 4.8.1s3.5 0 4.8-.1c1.1-.1 1.5-.2 1.9-.3.5-.2.8-.4 1.1-.7.3-.3.6-.6.7-1.1.1-.4.3-.8.3-1.9.1-1.2.1-1.6.1-4.8s0-3.5-.1-4.8c-.1-1.1-.2-1.5-.3-1.9-.2-.5-.4-.8-.7-1.1-.3-.3-.6-.6-1.1-.7-.4-.1-.8-.3-1.9-.3-1.3-.1-1.7-.1-4.8-.1zm0 3.1a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 8.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zm6.4-8.4a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z"/></svg>
     </a>
-    <nav class="main-nav">
-      <a href="#why">為什麼諮詢</a>
-      <a href="#flow">服務流程</a>
-      <a href="#about">關於牛牛老師</a>
-      <a href="#partner">合作品牌</a>
-      <a href="#reviews">家長分享</a>
-      <a href="#blog">最新文章</a>
-    </nav>
-    <div class="social-links">
-      <a href="https://www.instagram.com/mindy0707/" target="_blank" rel="noopener" aria-label="Instagram">
-        <svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2m0 1.8c-3.1 0-3.5 0-4.8.1-1.1.1-1.5.2-1.9.3-.5.2-.8.4-1.1.7-.3.3-.6.6-.7 1.1-.1.4-.3.8-.3 1.9-.1 1.2-.1 1.6-.1 4.8s0 3.5.1 4.8c.1 1.1.2 1.5.3 1.9.2.5.4.8.7 1.1.3.3.6.6 1.1.7.4.1.8.3 1.9.3 1.2.1 1.6.1 4.8.1s3.5 0 4.8-.1c1.1-.1 1.5-.2 1.9-.3.5-.2.8-.4 1.1-.7.3-.3.6-.6.7-1.1.1-.4.3-.8.3-1.9.1-1.2.1-1.6.1-4.8s0-3.5-.1-4.8c-.1-1.1-.2-1.5-.3-1.9-.2-.5-.4-.8-.7-1.1-.3-.3-.6-.6-1.1-.7-.4-.1-.8-.3-1.9-.3-1.3-.1-1.7-.1-4.8-.1zm0 3.1a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 8.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zm6.4-8.4a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z"/></svg>
-      </a>
-      <a href="https://www.facebook.com/share/1624QBbiubP/?mibextid=wwXIfr" target="_blank" rel="noopener" aria-label="Facebook">
-        <svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
-      </a>
-    </div>
+    <a href="https://www.facebook.com/share/1624QBbiubP/?mibextid=wwXIfr" target="_blank" rel="noopener" aria-label="Facebook">
+      <svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
+    </a>
   </div>
-</header>
+</nav>
+<div class="nav-overlay" id="nav-overlay"></div>
 
 <!-- ================= Hero ================= -->
 <section class="hero">
@@ -230,14 +235,10 @@
   </div>
 </footer>
 
-<!-- 右上固定 logo -->
-<a class="floating-logo" href="index.html" aria-label="牛牛老蘇補給站">
-  <img src="logo.PNG" alt="牛牛老蘇補給站 logo">
-</a>
-
 <!-- 固定預約按鈕 -->
 <a class="floating-cta" href="https://calendar.app.google/aHmSeufa2iEQpDbY9" target="_blank" rel="noopener">📅 立即預約 30 分鐘免費健康諮詢</a>
 
+<script src="nav.js"></script>
 <script src="posts.js"></script>
 <script>
   /* 渲染最新文章列表 */
