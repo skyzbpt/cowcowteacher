@@ -6,13 +6,13 @@
 <title>文章編輯器｜牛牛老師補給站</title>
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="logo.PNG">
-<script>
-  /* 登入守衛：未登入立即導回後台，避免內容外洩 */
-  if (sessionStorage.getItem("niuniu_admin_auth") !== "1") {
-    var _n = encodeURIComponent("editor.html" + location.search);
-    location.replace("admin.html?next=" + _n);
-  }
-</script>
+<style>
+  /* 登入驗證前先隱藏編輯器內容，避免閃現 */
+  .editor-page { display: none; }
+  body.auth-ok .editor-page { display: block; }
+  #auth-checking { text-align: center; padding: 80px 20px; color: var(--blue); }
+  body.auth-ok #auth-checking { display: none; }
+</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Huninn&display=swap" rel="stylesheet">
@@ -38,6 +38,7 @@
 </header>
 
 <section>
+  <div id="auth-checking" class="container">驗證登入中…</div>
   <div class="container editor-page">
     <h1 class="section-title">✏️ 文章編輯器</h1>
     <p class="section-sub">寫下你的育兒觀察與健康知識，發布後會出現在首頁的「最新文章」。</p>
@@ -80,9 +81,16 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="admin.js"></script>
 <script src="posts.js"></script>
 <script>
-  (function () {
+  (async function () {
+    /* 登入守衛：未登入導回後台 */
+    if (!(await niuRequireAuth())) return;
+    document.body.classList.add("auth-ok");
+
     const emojiInput = document.getElementById("post-emoji");
     const titleInput = document.getElementById("post-title");
     const content = document.getElementById("editor-content");
@@ -109,8 +117,8 @@
     });
 
     /* 載入編輯中的文章 */
-    function loadPost(id) {
-      const post = niuGetPost(id);
+    async function loadPost(id) {
+      const post = await niuGetPost(id);
       if (!post) return;
       editingId = id;
       emojiInput.value = post.emoji || "";
@@ -119,17 +127,17 @@
       deleteBtn.style.display = "inline-block";
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-    if (editingId) loadPost(editingId);
+    if (editingId) await loadPost(editingId);
 
     /* 儲存 */
-    saveBtn.addEventListener("click", function () {
+    saveBtn.addEventListener("click", async function () {
       const title = titleInput.value.trim();
       if (!title) { alert("請先輸入文章標題！"); titleInput.focus(); return; }
       const html = content.innerHTML.trim();
       if (!html || content.textContent.trim() === "" || content.textContent.trim() === "在這裡開始寫文章…") {
         alert("文章內容還是空的喔！"); content.focus(); return;
       }
-      const existing = editingId ? niuGetPost(editingId) : null;
+      const existing = editingId ? await niuGetPost(editingId) : null;
       const post = {
         id: editingId || ("post-" + Date.now()),
         emoji: emojiInput.value.trim() || "📝",
@@ -138,17 +146,26 @@
         excerpt: niuMakeExcerpt(html, 90),
         html: html
       };
-      niuSavePost(post);
-      alert("文章已儲存！");
-      location.href = "article.html?id=" + encodeURIComponent(post.id);
+      saveBtn.disabled = true;
+      try {
+        await niuSavePost(post);
+        location.href = "article.html?id=" + encodeURIComponent(post.id);
+      } catch (err) {
+        alert("儲存失敗：" + (err.message || err));
+        saveBtn.disabled = false;
+      }
     });
 
     /* 刪除 */
-    deleteBtn.addEventListener("click", function () {
+    deleteBtn.addEventListener("click", async function () {
       if (!editingId) return;
       if (!confirm("確定要刪除這篇文章嗎？")) return;
-      niuDeletePost(editingId);
-      location.href = "admin.html";
+      try {
+        await niuDeletePost(editingId);
+        location.href = "admin.html";
+      } catch (err) {
+        alert("刪除失敗：" + (err.message || err));
+      }
     });
   })();
 </script>

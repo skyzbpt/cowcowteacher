@@ -1,12 +1,38 @@
 /* ============================================
-   牛牛老蘇補給站 — 文章資料與儲存
-   文章儲存於瀏覽器 localStorage，
-   並內建預設文章（正向教養）。
+   牛牛老蘇補給站 — 文章資料層
+   --------------------------------------------
+   若 config.js 有填 Supabase 設定 → 文章存 Supabase
+   （所有訪客同步看到）；否則退回 localStorage 本機模式。
+
+   對外 API（皆為 async，請用 await）：
+     niuGetPosts()      取得所有文章（新到舊）
+     niuGetPost(id)     取得單篇
+     niuSavePost(post)  新增或更新
+     niuDeletePost(id)  刪除
+     niuSeedDefault()   把預設文章寫入後端（限已登入管理者）
    ============================================ */
 
-const NIU_STORAGE_KEY = "niuniu_posts_v1";
+/* ---------- 後端偵測 ---------- */
+function niuHasBackend() {
+  return !!(window.NIU_CONFIG &&
+            NIU_CONFIG.SUPABASE_URL &&
+            NIU_CONFIG.SUPABASE_ANON_KEY &&
+            window.supabase);
+}
 
-/* 預設文章 */
+let _niuClient = null;
+function niuGetClient() {
+  if (!niuHasBackend()) return null;
+  if (!_niuClient) {
+    _niuClient = window.supabase.createClient(
+      NIU_CONFIG.SUPABASE_URL,
+      NIU_CONFIG.SUPABASE_ANON_KEY
+    );
+  }
+  return _niuClient;
+}
+
+/* ---------- 預設文章（本機模式 / 匯入用） ---------- */
 const NIU_DEFAULT_POSTS = [
   {
     id: "default-positive-parenting",
@@ -52,60 +78,133 @@ const NIU_DEFAULT_POSTS = [
   }
 ];
 
-/* ---- 儲存層 ---- */
-function niuLoadStore() {
+/* ============================================
+   本機（localStorage）模式
+   ============================================ */
+const NIU_STORAGE_KEY = "niuniu_posts_v1";
+
+function niuLocalStore() {
   try {
     return JSON.parse(localStorage.getItem(NIU_STORAGE_KEY)) || { posts: [], hidden: [], overrides: {} };
   } catch (e) {
     return { posts: [], hidden: [], overrides: {} };
   }
 }
-
-function niuSaveStore(store) {
+function niuLocalSaveStore(store) {
   localStorage.setItem(NIU_STORAGE_KEY, JSON.stringify(store));
 }
-
-/* 取得所有文章（預設文章 + 使用者文章，套用覆寫與隱藏），新到舊排序 */
-function niuGetPosts() {
-  const store = niuLoadStore();
+function niuLocalGetPosts() {
+  const store = niuLocalStore();
   const defaults = NIU_DEFAULT_POSTS
     .filter(p => !store.hidden.includes(p.id))
     .map(p => store.overrides[p.id] ? Object.assign({}, p, store.overrides[p.id]) : p);
-  const all = defaults.concat(store.posts);
-  return all.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  return defaults.concat(store.posts)
+    .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 }
-
-function niuGetPost(id) {
-  return niuGetPosts().find(p => p.id === id) || null;
+function niuLocalGetPost(id) {
+  return niuLocalGetPosts().find(p => p.id === id) || null;
 }
-
-/* 新增或更新文章 */
-function niuSavePost(post) {
-  const store = niuLoadStore();
-  const isDefault = NIU_DEFAULT_POSTS.some(p => p.id === post.id);
-  if (isDefault) {
+function niuLocalSavePost(post) {
+  const store = niuLocalStore();
+  if (NIU_DEFAULT_POSTS.some(p => p.id === post.id)) {
     store.overrides[post.id] = post;
   } else {
     const idx = store.posts.findIndex(p => p.id === post.id);
     if (idx >= 0) store.posts[idx] = post;
     else store.posts.push(post);
   }
-  niuSaveStore(store);
+  niuLocalSaveStore(store);
 }
-
-/* 刪除文章（預設文章改為隱藏） */
-function niuDeletePost(id) {
-  const store = niuLoadStore();
+function niuLocalDeletePost(id) {
+  const store = niuLocalStore();
   if (NIU_DEFAULT_POSTS.some(p => p.id === id)) {
     if (!store.hidden.includes(id)) store.hidden.push(id);
     delete store.overrides[id];
   } else {
     store.posts = store.posts.filter(p => p.id !== id);
   }
-  niuSaveStore(store);
+  niuLocalSaveStore(store);
 }
 
-/* 從 HTML 產生純文字摘要 */
+/* ============================================
+   對外 API（自動選擇後端或本機）
+   ============================================ */
+async function niuGetPosts() {
+  const c = niuGetClient();
+  if (c) {
+    try {
+      const { data, error } = await c
+        .from("posts")
+        .select("id,emoji,title,html,excerpt,date")
+        .order("date", { ascending: false })
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    } catch (e) {
+      console.error("[牛牛] 讀取文章失敗，改用本機資料：", e.message || e);
+      return niuLocalGetPosts();
+    }
+  }
+  return niuLocalGetPosts();
+}
+
+async function niuGetPost(id) {
+  const c = niuGetClient();
+  if (c) {
+    try {
+      const { data, error } = await c.from("posts").select("*").eq("id", id).maybeSingle();
+      if (error) throw error;
+      return data || null;
+    } catch (e) {
+      console.error("[牛牛] 讀取文章失敗，改用本機資料：", e.message || e);
+      return niuLocalGetPost(id);
+    }
+  }
+  return niuLocalGetPost(id);
+}
+
+async function niuSavePost(post) {
+  const c = niuGetClient();
+  if (c) {
+    const row = {
+      id: post.id,
+      emoji: post.emoji || "📝",
+      title: post.title,
+      html: post.html,
+      excerpt: post.excerpt || "",
+      date: post.date,
+      updated_at: new Date().toISOString()
+    };
+    const { error } = await c.from("posts").upsert(row);
+    if (error) throw error;
+    return;
+  }
+  niuLocalSavePost(post);
+}
+
+async function niuDeletePost(id) {
+  const c = niuGetClient();
+  if (c) {
+    const { error } = await c.from("posts").delete().eq("id", id);
+    if (error) throw error;
+    return;
+  }
+  niuLocalDeletePost(id);
+}
+
+/* 把預設文章寫入後端（限已登入的管理者，供後台「匯入」用） */
+async function niuSeedDefault() {
+  const c = niuGetClient();
+  if (!c) return;
+  const p = NIU_DEFAULT_POSTS[0];
+  const { error } = await c.from("posts").upsert({
+    id: p.id, emoji: p.emoji, title: p.title,
+    html: p.html, excerpt: p.excerpt, date: p.date
+  });
+  if (error) throw error;
+}
+
+/* ---------- 工具 ---------- */
 function niuMakeExcerpt(html, len) {
   const div = document.createElement("div");
   div.innerHTML = html;
@@ -113,7 +212,6 @@ function niuMakeExcerpt(html, len) {
   return text.length > len ? text.slice(0, len) + "…" : text;
 }
 
-/* 今天日期（yyyy-mm-dd） */
 function niuToday() {
   const d = new Date();
   const mm = String(d.getMonth() + 1).padStart(2, "0");

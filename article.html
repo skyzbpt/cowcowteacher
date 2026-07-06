@@ -81,13 +81,15 @@
 
 <a class="floating-cta" href="https://calendar.app.google/aHmSeufa2iEQpDbY9" target="_blank" rel="noopener">📅 立即預約 30 分鐘免費健康諮詢</a>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <script src="nav.js"></script>
 <script src="posts.js"></script>
 <script>
-  (function () {
+  (async function () {
     const el = document.getElementById("article");
     const id = new URLSearchParams(location.search).get("id");
-    const post = id && niuGetPost(id);
+    const post = id ? await niuGetPost(id) : null;
     if (!post) {
       el.innerHTML = '<p class="empty-posts">找不到這篇文章，它可能已被刪除。</p>';
       return;

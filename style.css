@@ -823,7 +823,8 @@ section { padding: 72px 0; }
 
 .login-hint { color: var(--brown); font-size: .95rem; margin-bottom: 12px; }
 
-.login-card input[type="password"] {
+.login-card input[type="password"],
+.login-card input[type="email"] {
   width: 100%;
   font-family: var(--font);
   font-size: 1.05rem;
@@ -833,9 +834,11 @@ section { padding: 72px 0; }
   background: #fff;
   color: var(--brown);
   text-align: center;
+  margin-bottom: 4px;
 }
 
-.login-card input[type="password"]:focus { outline: none; border-color: var(--primary); }
+.login-card input[type="password"]:focus,
+.login-card input[type="email"]:focus { outline: none; border-color: var(--primary); }
 
 .login-error { color: var(--primary); font-size: .9rem; display: none; margin: 4px 0; }
 

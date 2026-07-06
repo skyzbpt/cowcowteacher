@@ -19,7 +19,8 @@
   <form class="login-card" id="login-form">
     <img src="logo.PNG" alt="牛牛老蘇補給站 logo" class="login-logo">
     <h1>後台管理登入</h1>
-    <p class="login-hint">請輸入後台密碼以管理文章</p>
+    <p class="login-hint" id="login-hint">請輸入後台密碼以管理文章</p>
+    <input type="email" id="login-email" placeholder="管理者 email" autocomplete="username" style="display:none">
     <input type="password" id="login-pw" placeholder="後台密碼" autocomplete="current-password">
     <p class="login-error" id="login-error">密碼錯誤，請再試一次。</p>
     <button class="btn" type="submit">登入</button>
@@ -73,7 +74,10 @@
             <tbody id="admin-tbody"></tbody>
           </table>
         </div>
-        <p class="empty-posts" id="admin-empty" style="display:none">目前還沒有文章，點右上角「寫新文章」開始吧！</p>
+        <div class="empty-posts" id="admin-empty" style="display:none">
+          <p>目前還沒有文章，點右上角「寫新文章」開始吧！</p>
+          <button class="btn btn-small btn-outline" id="seed-btn" style="display:none;margin-top:12px">📥 匯入預設文章（正向教養）</button>
+        </div>
       </div>
     </div>
   </section>
@@ -85,39 +89,58 @@
   </footer>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <script src="admin.js"></script>
 <script src="posts.js"></script>
 <script>
-  (function () {
+  (async function () {
     const loginView = document.getElementById("login-view");
     const dashView = document.getElementById("dash-view");
+    const emailEl = document.getElementById("login-email");
+    const pwEl = document.getElementById("login-pw");
+    const errEl = document.getElementById("login-error");
+    const hintEl = document.getElementById("login-hint");
+    const backend = niuHasBackend();
+
+    /* 依模式調整登入畫面：接後端要 email + 密碼 */
+    if (backend) {
+      emailEl.style.display = "";
+      hintEl.textContent = "請以管理者 email 與密碼登入";
+      if (window.NIU_CONFIG && NIU_CONFIG.ADMIN_EMAIL) emailEl.value = NIU_CONFIG.ADMIN_EMAIL;
+    }
 
     function showLogin() {
       loginView.style.display = "flex";
       dashView.style.display = "none";
-      document.getElementById("login-pw").focus();
+      (backend && !emailEl.value ? emailEl : pwEl).focus();
     }
-
-    function showDash() {
+    async function showDash() {
       loginView.style.display = "none";
       dashView.style.display = "block";
-      renderDash();
+      await renderDash();
     }
 
     /* 登入表單 */
-    const form = document.getElementById("login-form");
-    const errEl = document.getElementById("login-error");
-    form.addEventListener("submit", function (e) {
+    document.getElementById("login-form").addEventListener("submit", async function (e) {
       e.preventDefault();
-      const pw = document.getElementById("login-pw").value;
-      if (niuLogin(pw)) {
-        errEl.style.display = "none";
+      errEl.style.display = "none";
+      let ok = false, msg = "密碼錯誤，請再試一次。";
+      if (backend) {
+        const res = await niuLoginBackend(emailEl.value.trim(), pwEl.value);
+        ok = res.ok;
+        if (!ok) msg = "登入失敗：" + (res.message || "請確認 email 與密碼");
+      } else {
+        ok = niuLoginLocal(pwEl.value);
+      }
+      if (ok) {
         const next = new URLSearchParams(location.search).get("next");
         if (next) { location.href = decodeURIComponent(next); return; }
-        showDash();
+        await showDash();
       } else {
+        errEl.textContent = msg;
         errEl.style.display = "block";
-        document.getElementById("login-pw").select();
+        pwEl.select();
       }
     });
 
@@ -126,18 +149,35 @@
       niuLogout();
     });
 
+    /* 匯入預設文章 */
+    document.getElementById("seed-btn").addEventListener("click", async function () {
+      const btn = this;
+      btn.disabled = true;
+      btn.textContent = "匯入中…";
+      try {
+        await niuSeedDefault();
+        await renderDash();
+      } catch (err) {
+        alert("匯入失敗：" + (err.message || err));
+        btn.disabled = false;
+        btn.textContent = "📥 匯入預設文章（正向教養）";
+      }
+    });
+
     /* 渲染儀表板 */
-    function renderDash() {
-      const posts = niuGetPosts();
+    async function renderDash() {
+      const posts = await niuGetPosts();
       document.getElementById("stat-total").textContent = posts.length;
       document.getElementById("stat-latest").textContent = posts.length ? posts[0].date : "—";
 
       const tbody = document.getElementById("admin-tbody");
       const empty = document.getElementById("admin-empty");
       const table = document.getElementById("admin-table");
+      const seedBtn = document.getElementById("seed-btn");
       if (!posts.length) {
         table.style.display = "none";
         empty.style.display = "block";
+        seedBtn.style.display = backend ? "inline-block" : "none";
         return;
       }
       table.style.display = "";
@@ -157,16 +197,20 @@
       }).join("");
 
       tbody.querySelectorAll("[data-del]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
+        btn.addEventListener("click", async function () {
           if (!confirm("確定要刪除「" + btn.dataset.title + "」嗎？此動作無法復原。")) return;
-          niuDeletePost(btn.dataset.del);
-          renderDash();
+          try {
+            await niuDeletePost(btn.dataset.del);
+            await renderDash();
+          } catch (err) {
+            alert("刪除失敗：" + (err.message || err));
+          }
         });
       });
     }
 
     /* 進入頁面：已登入直接看儀表板，否則登入畫面 */
-    if (niuIsLoggedIn()) showDash();
+    if (await niuIsLoggedIn()) await showDash();
     else showLogin();
   })();
 </script>
