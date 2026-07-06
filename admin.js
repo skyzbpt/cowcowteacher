@@ -6,7 +6,7 @@
    ============================================ */
 
 /* 後台密碼——請自行修改成你要的密碼 */
-const NIU_ADMIN_PASSWORD = "niuniu2026";
+const NIU_ADMIN_PASSWORD = "mindy4400";
 
 const NIU_AUTH_KEY = "niuniu_admin_auth";
 
