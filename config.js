@@ -16,5 +16,5 @@
 window.NIU_CONFIG = {
   SUPABASE_URL: "https://cunxpvolsiagtxwiitto.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_V1OM60-NvmnVlZ1qLGciRA_rBSs_Jck",
-  ADMIN_EMAIL: "skyzbpt@gmail.com"
+  ADMIN_EMAIL: "mindy4400@gmail.com"
 };

@@ -26,22 +26,22 @@ create policy "posts_public_read"
   using (true);
 
 -- 4) 只有「管理者本人」能新增／修改／刪除
---    ⚠⚠ 把下面三段的 admin@example.com 換成你的後台管理者 email ⚠⚠
+--    ⚠⚠ 下面三段的 email 就是後台管理者 email，需要換帳號時一起改 ⚠⚠
 drop policy if exists "posts_admin_insert" on public.posts;
 create policy "posts_admin_insert"
   on public.posts for insert to authenticated
-  with check ( (auth.jwt() ->> 'email') = 'admin@example.com' );
+  with check ( (auth.jwt() ->> 'email') = 'mindy4400@gmail.com' );
 
 drop policy if exists "posts_admin_update" on public.posts;
 create policy "posts_admin_update"
   on public.posts for update to authenticated
-  using ( (auth.jwt() ->> 'email') = 'admin@example.com' )
-  with check ( (auth.jwt() ->> 'email') = 'admin@example.com' );
+  using ( (auth.jwt() ->> 'email') = 'mindy4400@gmail.com' )
+  with check ( (auth.jwt() ->> 'email') = 'mindy4400@gmail.com' );
 
 drop policy if exists "posts_admin_delete" on public.posts;
 create policy "posts_admin_delete"
   on public.posts for delete to authenticated
-  using ( (auth.jwt() ->> 'email') = 'admin@example.com' );
+  using ( (auth.jwt() ->> 'email') = 'mindy4400@gmail.com' );
 
 -- 完成後，到 Authentication → Users 新增一位管理者（email 要跟上面一致），
 -- 並建議在 Authentication → Providers → Email 關閉「Allow new users to sign up」，
