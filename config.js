@@ -14,7 +14,7 @@
    （文章只存在你這台瀏覽器），方便你尚未設定時先使用。
    ============================================ */
 window.NIU_CONFIG = {
-  SUPABASE_URL: "",       // 例如：https://abcdefgh.supabase.co
-  SUPABASE_ANON_KEY: "",  // 例如：eyJhbGciOiJIUzI1NiIsInR5cCI6...
-  ADMIN_EMAIL: ""         // 後台管理者 email（登入畫面提示用，選填）
+  SUPABASE_URL: "https://cunxpvolsiagtxwiitto.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_V1OM60-NvmnVlZ1qLGciRA_rBSs_Jck",
+  ADMIN_EMAIL: "skyzbpt@gmail.com"
 };
