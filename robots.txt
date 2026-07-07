@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /editor.html
+
+Sitemap: https://skyzbpt.github.io/cowcowteacher/sitemap.xml

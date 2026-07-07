@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>文章｜牛牛老師補給站</title>
 <meta name="description" content="牛牛老師補給站部落格文章——科學育兒、正向教養與兒童健康知識分享。">
+<meta name="keywords" content="過敏, 過敏兒家庭, 兒童過敏, 幼兒過敏, 鼻過敏, 異位性皮膚炎, 脹氣, 兒童脹氣, 便祕, 幼兒便祕, 兒童睡眠, 孩子睡不好, 兒童情緒, 幼教老師, 健康教育, 健康檢測, 功能醫學, 免費諮詢, 正向教養, 牛牛老師補給站">
+<meta name="author" content="林溱桐｜牛牛老蘇">
+<meta property="og:type" content="article">
+<meta property="og:image" content="cow.JPG">
 <link rel="icon" type="image/png" href="logo.PNG">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,10 +99,29 @@
       return;
     }
     document.title = post.title + "｜牛牛老師補給站";
+    if (post.excerpt) {
+      var desc = document.querySelector('meta[name="description"]');
+      if (desc) desc.setAttribute("content", post.excerpt);
+    }
     el.innerHTML =
       '<h1>' + (post.emoji ? post.emoji + " " : "") + post.title + '</h1>' +
       '<p class="article-meta">' + (post.date || "") + '｜牛牛老蘇</p>' +
       '<div class="article-body">' + post.html + '</div>';
+
+    /* 注入文章結構化資料，利於搜尋引擎 */
+    var ld = document.createElement("script");
+    ld.type = "application/ld+json";
+    ld.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": post.title,
+      "description": post.excerpt || "",
+      "datePublished": post.date || "",
+      "author": { "@type": "Person", "name": "林溱桐", "alternateName": "牛牛老蘇" },
+      "publisher": { "@type": "Organization", "name": "牛牛老師補給站" },
+      "mainEntityOfPage": location.href
+    });
+    document.head.appendChild(ld);
   })();
 </script>
 </body>
